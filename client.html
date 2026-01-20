@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Laundry Bubbles · Client</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand-lockup">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-text-main">Laundry Bubbles</div>
+          <div class="brand-text-sub">Client Dashboard</div>
+        </div>
+      </div>
+      <button class="secondary-btn" id="logoutBtn">Log out</button>
+    </header>
+
+    <section class="two-column">
+      <div class="panel">
+        <h2>Your profile & payment handles</h2>
+        <form id="clientProfileForm" class="stack-form">
+          <label>Name</label>
+          <input id="clientName" type="text" required>
+
+          <label>Phone</label>
+          <input id="clientPhone" type="text">
+
+          <label>Apple Pay handle (optional)</label>
+          <input id="clientApplePay" type="text" placeholder="phone or email">
+
+          <label>Cash App $tag (optional)</label>
+          <input id="clientCashApp" type="text" placeholder="$yourtag">
+
+          <label>PayPal email (optional)</label>
+          <input id="clientPaypal" type="email" placeholder="you@paypal.com">
+
+          <label>Card note (optional)</label>
+          <input id="clientCardNote" type="text" placeholder="e.g., will pay with Visa ending in 1234">
+
+          <button class="primary-btn" type="submit">Save profile</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Request a pickup</h2>
+        <form id="orderForm" class="stack-form">
+          <label>Pickup address</label>
+          <input id="pickupAddress" type="text" required>
+
+          <label>Dropoff address</label>
+          <input id="dropoffAddress" type="text" required>
+
+          <label>Notes (delicates, stains, sewing, timing)</label>
+          <textarea id="orderNotes" rows="3"></textarea>
+
+          <button class="primary-btn" type="submit">Request pickup</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:20px;">
+      <h2>Your orders</h2>
+      <div id="ordersList" class="list"></div>
+    </section>
+  </main>
+
+  <script>
+    const pb = new PocketBase("https://YOUR_PB_URL");
+  </script>
+  <script src="/js/client.js"></script>
+</body>
+</html>
