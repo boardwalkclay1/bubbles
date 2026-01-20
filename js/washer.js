@@ -1,0 +1,143 @@
+// washer.js
+
+if (!pb.authStore.isValid) {
+  window.location.href = "/index.html";
+}
+
+const user = pb.authStore.model;
+if (!user || user.role !== "washer") {
+  window.location.href = "/index.html";
+}
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  pb.authStore.clear();
+  window.location.href = "/index.html";
+});
+
+const profileForm = document.getElementById("washerProfileForm");
+const incomingList = document.getElementById("incomingOrders");
+const activeList = document.getElementById("activeOrders");
+
+async function loadWasherProfile() {
+  document.getElementById("washerName").value = user.name || "";
+  document.getElementById("washerPhone").value = user.phone || "";
+  document.getElementById("washerApplePay").value = user.applePayHandle || "";
+  document.getElementById("washerCashApp").value = user.cashAppHandle || "";
+  document.getElementById("washerPaypal").value = user.paypalEmail || "";
+  document.getElementById("washerCardNote").value = user.cardNote || "";
+}
+
+profileForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const updated = await pb.collection("users").update(user.id, {
+      name: document.getElementById("washerName").value.trim(),
+      phone: document.getElementById("washerPhone").value.trim(),
+      applePayHandle: document.getElementById("washerApplePay").value.trim(),
+      cashAppHandle: document.getElementById("washerCashApp").value.trim(),
+      paypalEmail: document.getElementById("washerPaypal").value.trim(),
+      cardNote: document.getElementById("washerCardNote").value.trim()
+    });
+    pb.authStore.save(pb.authStore.token, updated);
+    alert("Profile saved.");
+  } catch (err) {
+    console.error(err);
+    alert("Could not save profile.");
+  }
+});
+
+async function loadIncomingOrders() {
+  try {
+    const result = await pb.collection("orders").getFullList({
+      filter: `status="requested" && washer=""`,
+      sort: "created"
+    });
+
+    incomingList.innerHTML = "";
+    result.forEach(order => {
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `
+        <div><strong>Client:</strong> ${order.expand?.client?.name || "Unknown"}</div>
+        <div><strong>Pickup:</strong> ${order.pickupAddress}</div>
+        <div><strong>Dropoff:</strong> ${order.dropoffAddress}</div>
+        <div><strong>Notes:</strong> ${order.notes || "—"}</div>
+        <button class="primary-btn small" data-id="${order.id}">Accept</button>
+      `;
+      const btn = div.querySelector("button");
+      btn.addEventListener("click", () => acceptOrder(order.id));
+      incomingList.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
+    incomingList.innerHTML = "<div class='list-item'>Could not load incoming orders.</div>";
+  }
+}
+
+async function loadActiveOrders() {
+  try {
+    const result = await pb.collection("orders").getFullList({
+      filter: `washer="${user.id}" && status!="delivered"`,
+      sort: "created"
+    });
+
+    activeList.innerHTML = "";
+    result.forEach(order => {
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `
+        <div><strong>Status:</strong> ${order.status}</div>
+        <div><strong>Client:</strong> ${order.expand?.client?.name || "Unknown"}</div>
+        <div><strong>Pickup:</strong> ${order.pickupAddress}</div>
+        <div><strong>Dropoff:</strong> ${order.dropoffAddress}</div>
+        <div><strong>Notes:</strong> ${order.notes || "—"}</div>
+        <button class="secondary-btn small" data-id="${order.id}">Advance status</button>
+      `;
+      const btn = div.querySelector("button");
+      btn.addEventListener("click", () => advanceStatus(order));
+      activeList.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
+    activeList.innerHTML = "<div class='list-item'>Could not load active orders.</div>";
+  }
+}
+
+async function acceptOrder(orderId) {
+  try {
+    await pb.collection("orders").update(orderId, {
+      washer: user.id,
+      status: "accepted"
+    });
+    await loadIncomingOrders();
+    await loadActiveOrders();
+  } catch (err) {
+    console.error(err);
+    alert("Could not accept order.");
+  }
+}
+
+async function advanceStatus(order) {
+  const sequence = ["accepted", "picked_up", "in_progress", "completed", "delivered"];
+  const currentIndex = sequence.indexOf(order.status);
+  const nextStatus = sequence[Math.min(currentIndex + 1, sequence.length - 1)];
+
+  if (nextStatus === order.status) {
+    alert("Order already delivered.");
+    return;
+  }
+
+  try {
+    await pb.collection("orders").update(order.id, {
+      status: nextStatus
+    });
+    await loadActiveOrders();
+  } catch (err) {
+    console.error(err);
+    alert("Could not update status.");
+  }
+}
+
+loadWasherProfile();
+loadIncomingOrders();
+loadActiveOrders();
