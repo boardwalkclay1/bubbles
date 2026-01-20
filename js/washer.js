@@ -1,17 +1,17 @@
 // washer.js
 
 if (!pb.authStore.isValid) {
-  window.location.href = "/index.html";
+  window.location.href = "/bubbles/index.html";
 }
 
 const user = pb.authStore.model;
 if (!user || user.role !== "washer") {
-  window.location.href = "/index.html";
+  window.location.href = "/bubbles/index.html";
 }
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
   pb.authStore.clear();
-  window.location.href = "/index.html";
+  window.location.href = "/bubbles/index.html";
 });
 
 const profileForm = document.getElementById("washerProfileForm");
