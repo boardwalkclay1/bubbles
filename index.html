@@ -6,17 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/styles.css">
+  <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
 </head>
 <body>
-  <!-- Optional loading screen -->
-  <div class="loading-overlay" id="loadingOverlay" style="display:none;">
-    <div class="loading-bubbles">
-      <div class="bubble small"></div>
-      <div class="bubble medium"></div>
-      <div class="bubble large"></div>
-    </div>
-  </div>
-
   <main class="app-shell">
     <header class="app-header">
       <div class="brand-lockup">
@@ -34,8 +26,7 @@
           <span>Client ↔ Washer · Direct Pay · No Middleman</span>
         </div>
         <h1>
-          Wash them like it’s <span>1977</span>,  
-          pay them like it’s <span>right now</span>.
+          Wash them like it’s <span>1977</span>, pay them like it’s <span>right now</span>.
         </h1>
         <p>
           Laundry Bubbles connects people who need clothes washed, dried, or sewn with local washers who set their own
@@ -43,14 +34,14 @@
           corporate middle layer.
         </p>
 
-        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:10px;">
+        <p class="small-muted">
           When you sign up, you’ll see exactly how the app works—for both clients and washers—before you place or accept
           a single load.
         </p>
 
         <!-- $1 gate -->
-        <form id="supportGateForm" style="margin-top:10px;">
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:6px;">
+        <div class="gate-box">
+          <p class="small-muted">
             To unlock the full app, we ask for a one‑time $1 support payment.
           </p>
           <a
@@ -58,45 +49,29 @@
             target="_blank"
             rel="noopener noreferrer"
             class="primary-btn"
-            style="display:inline-block; text-align:center; text-decoration:none;"
           >
             Send $1 via PayPal to unlock
           </a>
-          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">
-            After payment, return here and choose your side below.
+          <p class="tiny-muted">
+            After payment, return here and log in or sign up below.
           </p>
-        </form>
-
-        <!-- Role selection -->
-        <div style="margin-top:16px;">
-          <p style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.16em; color:var(--text-muted); margin-bottom:6px;">
-            Choose how you’ll use Laundry Bubbles:
-          </p>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <a href="/client.html" class="primary-btn" style="max-width:220px; text-align:center; text-decoration:none;">
-              I’m a Client (I need laundry done)
-            </a>
-            <a href="/washer.html" class="primary-btn" style="max-width:220px; text-align:center; text-decoration:none;">
-              I’m a Washer (I wash & sew)
-            </a>
-          </div>
         </div>
 
         <!-- Explanation for both sides -->
-        <div class="disclaimer-box" style="margin-top:16px;">
+        <div class="disclaimer-box">
           <div class="disclaimer-title">How the app works · Clients</div>
           <p>
-            • Create a profile with your basic info and preferred payment methods (Apple Pay, Cash App, PayPal, debit card).  
-            • Request a pickup with your address, notes (delicates, stains, repairs), and timing.  
-            • A washer accepts your load, picks it up, washes/dries/sews as agreed, and returns it.  
+            • Create a profile with your basic info and preferred payment methods (Apple Pay, Cash App, PayPal, debit card note).<br>
+            • Request a pickup with your address, notes (delicates, stains, repairs), and timing.<br>
+            • A washer accepts your load, picks it up, washes/dries/sews as agreed, and returns it.<br>
             • You pay the washer directly using the payment method you both agree on—Laundry Bubbles does not hold or move money.
           </p>
           <br>
           <div class="disclaimer-title">How the app works · Washers</div>
           <p>
-            • Create a profile with your skills (wash, dry, fold, sew), service area, and payment handles.  
-            • Set your availability and watch incoming requests in your dashboard.  
-            • Accept jobs you want, chat with clients, pick up, complete, and return loads.  
+            • Create a profile with your skills (wash, dry, fold, sew), service area, and payment handles.<br>
+            • Set your availability and watch incoming requests in your dashboard.<br>
+            • Accept jobs you want, chat with clients (later), pick up, complete, and return loads.<br>
             • Get paid directly by clients via Apple Pay, Cash App, PayPal, or card—no platform payout delays.
           </p>
           <br>
@@ -110,20 +85,20 @@
           <br>
           <div class="disclaimer-title">Agreements & expectations</div>
           <p>
-            By continuing, you agree that:  
-            • Clients clearly describe items, special care needs, and any existing damage.  
-            • Washers treat every load with care and communicate honestly about what they can and cannot do.  
-            • Payments are made directly between client and washer using mutually agreed methods.  
+            By continuing, you agree that:<br>
+            • Clients clearly describe items, special care needs, and any existing damage.<br>
+            • Washers treat every load with care and communicate honestly about what they can and cannot do.<br>
+            • Payments are made directly between client and washer using mutually agreed methods.<br>
             • Laundry Bubbles provides the tools to connect, message, and track—not financial, legal, or cleaning services.
           </p>
         </div>
       </div>
 
-      <!-- Right side: auth panel placeholder (you’ll wire logic later) -->
+      <!-- Auth panel -->
       <aside class="auth-panel">
         <div class="auth-tabs">
-          <button class="auth-tab active" type="button">Log in</button>
-          <button class="auth-tab" type="button">Sign up</button>
+          <button class="auth-tab active" type="button" data-mode="login">Log in</button>
+          <button class="auth-tab" type="button" data-mode="signup">Sign up</button>
         </div>
         <form class="auth-form" id="authForm">
           <label for="role">I’m using Laundry Bubbles as</label>
@@ -131,6 +106,9 @@
             <option value="client">Client (I need laundry done)</option>
             <option value="washer">Washer (I wash & sew)</option>
           </select>
+
+          <label for="name">Name</label>
+          <input id="name" type="text" placeholder="Your name">
 
           <label for="email">Email</label>
           <input id="email" type="email" placeholder="you@example.com" required>
@@ -153,6 +131,9 @@
     </div>
   </main>
 
+  <script>
+    const pb = new PocketBase("https://YOUR_PB_URL");
+  </script>
   <script src="/js/app.js"></script>
 </body>
 </html>
