@@ -38,9 +38,9 @@ authForm.addEventListener("submit", async (e) => {
     }
 
     if (authData.record.role === "client") {
-      window.location.href = "/client.html";
+      window.location.href = "/bubbles/client.html";
     } else if (authData.record.role === "washer") {
-      window.location.href = "/washer.html";
+      window.location.href = "/bubbles/washer.html";
     } else {
       alert("Unknown role on account.");
     }
