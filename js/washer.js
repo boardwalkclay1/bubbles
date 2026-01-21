@@ -1,23 +1,39 @@
-// washer.js
+// =======================================
+// PocketBase Initialization
+// =======================================
+const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
 
+// Redirect if not logged in
 if (!pb.authStore.isValid) {
   window.location.href = "/bubbles/index.html";
 }
 
 const user = pb.authStore.model;
+
+// Redirect if not a washer
 if (!user || user.role !== "washer") {
   window.location.href = "/bubbles/index.html";
 }
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  pb.authStore.clear();
-  window.location.href = "/bubbles/index.html";
-});
-
+// =======================================
+// DOM Elements
+// =======================================
+const logoutBtn = document.getElementById("logoutBtn");
 const profileForm = document.getElementById("washerProfileForm");
 const incomingList = document.getElementById("incomingOrders");
 const activeList = document.getElementById("activeOrders");
 
+// =======================================
+// Logout
+// =======================================
+logoutBtn?.addEventListener("click", () => {
+  pb.authStore.clear();
+  window.location.href = "/bubbles/index.html";
+});
+
+// =======================================
+// Load Washer Profile
+// =======================================
 async function loadWasherProfile() {
   document.getElementById("washerName").value = user.name || "";
   document.getElementById("washerPhone").value = user.phone || "";
@@ -27,8 +43,12 @@ async function loadWasherProfile() {
   document.getElementById("washerCardNote").value = user.cardNote || "";
 }
 
-profileForm.addEventListener("submit", async (e) => {
+// =======================================
+// Save Profile
+// =======================================
+profileForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   try {
     const updated = await pb.collection("users").update(user.id, {
       name: document.getElementById("washerName").value.trim(),
@@ -38,7 +58,10 @@ profileForm.addEventListener("submit", async (e) => {
       paypalEmail: document.getElementById("washerPaypal").value.trim(),
       cardNote: document.getElementById("washerCardNote").value.trim()
     });
-    pb.authStore.save(pb.authStore.token, updated);
+
+    // Update local auth model
+    pb.authStore.model = updated;
+
     alert("Profile saved.");
   } catch (err) {
     console.error(err);
@@ -46,14 +69,19 @@ profileForm.addEventListener("submit", async (e) => {
   }
 });
 
+// =======================================
+// Load Incoming Orders
+// =======================================
 async function loadIncomingOrders() {
   try {
     const result = await pb.collection("orders").getFullList({
-      filter: `status="requested" && washer=""`,
-      sort: "created"
+      filter: 'status = "requested" && washer = ""',
+      expand: "client",
+      sort: "-created"
     });
 
     incomingList.innerHTML = "";
+
     result.forEach(order => {
       const div = document.createElement("div");
       div.className = "list-item";
@@ -62,26 +90,32 @@ async function loadIncomingOrders() {
         <div><strong>Pickup:</strong> ${order.pickupAddress}</div>
         <div><strong>Dropoff:</strong> ${order.dropoffAddress}</div>
         <div><strong>Notes:</strong> ${order.notes || "—"}</div>
-        <button class="primary-btn small" data-id="${order.id}">Accept</button>
+        <button class="primary-btn small">Accept</button>
       `;
-      const btn = div.querySelector("button");
-      btn.addEventListener("click", () => acceptOrder(order.id));
+
+      div.querySelector("button").addEventListener("click", () => acceptOrder(order.id));
       incomingList.appendChild(div);
     });
+
   } catch (err) {
     console.error(err);
     incomingList.innerHTML = "<div class='list-item'>Could not load incoming orders.</div>";
   }
 }
 
+// =======================================
+// Load Active Orders
+// =======================================
 async function loadActiveOrders() {
   try {
     const result = await pb.collection("orders").getFullList({
-      filter: `washer="${user.id}" && status!="delivered"`,
-      sort: "created"
+      filter: `washer = "${user.id}" && status != "delivered"`,
+      expand: "client",
+      sort: "-created"
     });
 
     activeList.innerHTML = "";
+
     result.forEach(order => {
       const div = document.createElement("div");
       div.className = "list-item";
@@ -91,36 +125,44 @@ async function loadActiveOrders() {
         <div><strong>Pickup:</strong> ${order.pickupAddress}</div>
         <div><strong>Dropoff:</strong> ${order.dropoffAddress}</div>
         <div><strong>Notes:</strong> ${order.notes || "—"}</div>
-        <button class="secondary-btn small" data-id="${order.id}">Advance status</button>
+        <button class="secondary-btn small">Advance status</button>
       `;
-      const btn = div.querySelector("button");
-      btn.addEventListener("click", () => advanceStatus(order));
+
+      div.querySelector("button").addEventListener("click", () => advanceStatus(order));
       activeList.appendChild(div);
     });
+
   } catch (err) {
     console.error(err);
     activeList.innerHTML = "<div class='list-item'>Could not load active orders.</div>";
   }
 }
 
+// =======================================
+// Accept Order
+// =======================================
 async function acceptOrder(orderId) {
   try {
     await pb.collection("orders").update(orderId, {
       washer: user.id,
       status: "accepted"
     });
-    await loadIncomingOrders();
-    await loadActiveOrders();
+
+    loadIncomingOrders();
+    loadActiveOrders();
+
   } catch (err) {
     console.error(err);
     alert("Could not accept order.");
   }
 }
 
+// =======================================
+// Advance Order Status
+// =======================================
 async function advanceStatus(order) {
   const sequence = ["accepted", "picked_up", "in_progress", "completed", "delivered"];
-  const currentIndex = sequence.indexOf(order.status);
-  const nextStatus = sequence[Math.min(currentIndex + 1, sequence.length - 1)];
+  const nextStatus = sequence[Math.min(sequence.indexOf(order.status) + 1, sequence.length - 1)];
 
   if (nextStatus === order.status) {
     alert("Order already delivered.");
@@ -128,16 +170,17 @@ async function advanceStatus(order) {
   }
 
   try {
-    await pb.collection("orders").update(order.id, {
-      status: nextStatus
-    });
-    await loadActiveOrders();
+    await pb.collection("orders").update(order.id, { status: nextStatus });
+    loadActiveOrders();
   } catch (err) {
     console.error(err);
     alert("Could not update status.");
   }
 }
 
+// =======================================
+// Initialize Page
+// =======================================
 loadWasherProfile();
 loadIncomingOrders();
 loadActiveOrders();
