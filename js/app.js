@@ -7,6 +7,7 @@ const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
 // OWNER BYPASS
 // =======================================
 const OWNER_EMAIL = "boardwalkclay1@gmail.com";
+const OWNER_FALLBACK_PASSWORD = "ownerpass"; // set this in PocketBase admin
 
 // =======================================
 // PAYPAL REDIRECT UNLOCK
@@ -14,7 +15,6 @@ const OWNER_EMAIL = "boardwalkclay1@gmail.com";
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get("access") === "granted") {
   localStorage.setItem("paidGate", "true");
-  console.log("Payment verified via PayPal redirect.");
 }
 
 // =======================================
@@ -24,7 +24,6 @@ function hasPaidGate() {
   return localStorage.getItem("paidGate") === "true";
 }
 
-// Manual unlock (fallback)
 window.unlockAfterPayment = function () {
   localStorage.setItem("paidGate", "true");
   alert("Payment received — the app is now unlocked.");
@@ -54,9 +53,25 @@ authForm?.addEventListener("submit", async (e) => {
   const role = document.getElementById("role").value;
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  let password = document.getElementById("password").value;
 
   try {
+    // ============================
+    // OWNER INSTANT BYPASS (NO PASSWORD)
+    // ============================
+    if (email === OWNER_EMAIL) {
+      console.log("OWNER INSTANT BYPASS");
+
+      // If password empty, use fallback
+      if (!password) password = OWNER_FALLBACK_PASSWORD;
+
+      const authData = await pb.collection("users").authWithPassword(email, password);
+
+      // Always send owner to washer dashboard
+      window.location.href = "washer.html";
+      return;
+    }
+
     // ============================
     // SIGNUP
     // ============================
@@ -78,7 +93,7 @@ authForm?.addEventListener("submit", async (e) => {
     }
 
     // ============================
-    // LOGIN
+    // LOGIN (normal users)
     // ============================
     const authData = await pb.collection("users").authWithPassword(email, password);
 
@@ -87,20 +102,6 @@ authForm?.addEventListener("submit", async (e) => {
     }
 
     const userRole = authData.record.role;
-
-    // ============================
-    // OWNER BYPASS
-    // ============================
-    if (email === OWNER_EMAIL) {
-      console.log("Owner bypass activated.");
-
-      if (userRole === "client") {
-        window.location.href = "client.html";
-      } else {
-        window.location.href = "washer.html";
-      }
-      return;
-    }
 
     // ============================
     // PAYWALL CHECK
