@@ -1,20 +1,15 @@
 FROM alpine:3.18
 
-# Install dependencies PocketBase needs
-RUN apk add --no-cache ca-certificates tzdata
+RUN apk add --no-cache curl unzip ca-certificates tzdata
 
-# Create working directory
 WORKDIR /app
 
-# Copy the Linux PocketBase binary into the container
-COPY pocketbase /app/pocketbase
+# Download PocketBase Linux binary directly during build
+RUN curl -L -o pb.zip https://github.com/pocketbase/pocketbase/releases/download/v0.36.1/pocketbase_0.36.1_linux_amd64.zip \
+    && unzip pb.zip \
+    && rm pb.zip \
+    && chmod +x pocketbase
 
-# Copy migrations and hooks if you have them
-COPY pb_migrations /app/pb_migrations
-COPY pb_hooks /app/pb_hooks
-
-# Expose PocketBase port
 EXPOSE 8090
 
-# Run PocketBase in production mode
 CMD ["/app/pocketbase", "serve", "--http=0.0.0.0:8090"]
