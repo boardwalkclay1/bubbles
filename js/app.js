@@ -1,12 +1,19 @@
-// app.js
+// =======================================
+// PocketBase Initialization
+// =======================================
+const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
 
-// ====== OWNER BYPASS (YOU GET IN FREE) ======
-const OWNER_EMAIL = "boardwalkclay1@gmail.com";   // <-- change if needed
+// =======================================
+// OWNER BYPASS (YOU GET IN FREE)
+// =======================================
+const OWNER_EMAIL = "boardwalkclay1@gmail.com";
 
-// ====== AUTH TAB LOGIC ======
+// =======================================
+// AUTH TAB LOGIC
+// =======================================
 const authTabs = document.querySelectorAll(".auth-tab");
 const authForm = document.getElementById("authForm");
-let authMode = "login"; // "login" or "signup"
+let authMode = "login";
 
 authTabs.forEach(tab => {
   tab.addEventListener("click", () => {
@@ -16,19 +23,22 @@ authTabs.forEach(tab => {
   });
 });
 
-// ====== PAYPAL GATE CHECK ======
+// =======================================
+// PAYPAL GATE CHECK
+// =======================================
 function hasPaidGate() {
   return localStorage.getItem("paidGate") === "true";
 }
 
-// Called after PayPal button is clicked
 window.unlockAfterPayment = function () {
   localStorage.setItem("paidGate", "true");
   alert("Payment received — the app is now unlocked.");
 };
 
-// ====== AUTH SUBMIT ======
-authForm.addEventListener("submit", async (e) => {
+// =======================================
+// AUTH SUBMIT HANDLER
+// =======================================
+authForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const role = document.getElementById("role").value;
@@ -37,8 +47,15 @@ authForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value;
 
   try {
-    // SIGNUP
+    // ============================
+    // SIGNUP FLOW
+    // ============================
     if (authMode === "signup") {
+      if (!email || !password || !role || !name) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
       await pb.collection("users").create({
         email,
         password,
@@ -46,19 +63,28 @@ authForm.addEventListener("submit", async (e) => {
         role,
         name
       });
+
+      alert("Account created. Please log in.");
     }
 
-    // LOGIN
+    // ============================
+    // LOGIN FLOW
+    // ============================
     const authData = await pb.collection("users").authWithPassword(email, password);
 
     if (!authData?.record?.role) {
       throw new Error("No role set on user.");
     }
 
-    // ====== OWNER BYPASS ======
+    const userRole = authData.record.role;
+
+    // ============================
+    // OWNER BYPASS
+    // ============================
     if (email === OWNER_EMAIL) {
       console.log("Owner bypass activated.");
-      if (authData.record.role === "client") {
+
+      if (userRole === "client") {
         window.location.href = "/bubbles/client.html";
       } else {
         window.location.href = "/bubbles/washer.html";
@@ -66,23 +92,27 @@ authForm.addEventListener("submit", async (e) => {
       return;
     }
 
-    // ====== NORMAL USERS MUST PAY $1 ======
+    // ============================
+    // PAYWALL CHECK
+    // ============================
     if (!hasPaidGate()) {
       alert("Please complete the $1 unlock first.");
       return;
     }
 
-    // ====== ROUTE BASED ON ROLE ======
-    if (authData.record.role === "client") {
+    // ============================
+    // ROUTE BASED ON ROLE
+    // ============================
+    if (userRole === "client") {
       window.location.href = "/bubbles/client.html";
-    } else if (authData.record.role === "washer") {
+    } else if (userRole === "washer") {
       window.location.href = "/bubbles/washer.html";
     } else {
       alert("Unknown role on account.");
     }
 
   } catch (err) {
-    console.error(err);
+    console.error("Auth error:", err);
     alert("Login / signup failed. Check your info and try again.");
   }
 });
