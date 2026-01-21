@@ -5,14 +5,14 @@ const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
 
 // Redirect if not logged in
 if (!pb.authStore.isValid) {
-  window.location.href = "/bubbles/index.html";
+  window.location.href = "/index.html";
 }
 
 const user = pb.authStore.model;
 
 // Redirect if not a client
 if (!user || user.role !== "client") {
-  window.location.href = "/bubbles/index.html";
+  window.location.href = "/index.html";
 }
 
 // =======================================
