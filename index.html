@@ -4,10 +4,15 @@
   <meta charset="UTF-8">
   <title>Laundry Bubbles · 70s Wash & Sew</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Manifest + Styles -->
   <link rel="manifest" href="/bubbles/manifest.json">
   <link rel="stylesheet" href="/bubbles/styles.css">
+
+  <!-- PocketBase SDK -->
   <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
 </head>
+
 <body>
   <main class="app-shell">
     <header class="app-header">
@@ -25,9 +30,11 @@
         <div class="hero-pill">
           <span>Client ↔ Washer · Direct Pay · No Middleman</span>
         </div>
+
         <h1>
           Wash them like it’s <span>1977</span>, pay them like it’s <span>right now</span>.
         </h1>
+
         <p>
           Laundry Bubbles connects people who need clothes washed, dried, or sewn with local washers who set their own
           availability, pricing, and style. Clients pay washers directly using modern payment apps—no hidden fees, no
@@ -39,11 +46,12 @@
           a single load.
         </p>
 
-        <!-- $1 gate -->
+        <!-- $1 Gate -->
         <div class="gate-box">
           <p class="small-muted">
             To unlock the full app, we ask for a one‑time $1 support payment.
           </p>
+
           <a
             href="https://www.paypal.me/YOUR_PAYPAL_NAME/1"
             target="_blank"
@@ -52,12 +60,13 @@
           >
             Send $1 via PayPal to unlock
           </a>
+
           <p class="tiny-muted">
             After payment, return here and log in or sign up below.
           </p>
         </div>
 
-        <!-- Explanation for both sides -->
+        <!-- Explanations -->
         <div class="disclaimer-box">
           <div class="disclaimer-title">How the app works · Clients</div>
           <p>
@@ -66,7 +75,9 @@
             • A washer accepts your load, picks it up, washes/dries/sews as agreed, and returns it.<br>
             • You pay the washer directly using the payment method you both agree on—Laundry Bubbles does not hold or move money.
           </p>
+
           <br>
+
           <div class="disclaimer-title">How the app works · Washers</div>
           <p>
             • Create a profile with your skills (wash, dry, fold, sew), service area, and payment handles.<br>
@@ -74,7 +85,9 @@
             • Accept jobs you want, chat with clients (later), pick up, complete, and return loads.<br>
             • Get paid directly by clients via Apple Pay, Cash App, PayPal, or card—no platform payout delays.
           </p>
+
           <br>
+
           <div class="disclaimer-title">Disclaimer · Lost or damaged items</div>
           <p>
             Laundry Bubbles is a connection platform only. We do not handle clothing, do not supervise washes, and do not
@@ -82,7 +95,9 @@
             By using this app, both clients and washers agree that Laundry Bubbles is not responsible for missing, damaged,
             or altered items. Any disputes, refunds, or replacements are handled directly between client and washer.
           </p>
+
           <br>
+
           <div class="disclaimer-title">Agreements & expectations</div>
           <p>
             By continuing, you agree that:<br>
@@ -94,12 +109,13 @@
         </div>
       </div>
 
-      <!-- Auth panel -->
+      <!-- Auth Panel -->
       <aside class="auth-panel">
         <div class="auth-tabs">
           <button class="auth-tab active" type="button" data-mode="login">Log in</button>
           <button class="auth-tab" type="button" data-mode="signup">Sign up</button>
         </div>
+
         <form class="auth-form" id="authForm">
           <label for="role">I’m using Laundry Bubbles as</label>
           <select id="role" name="role">
@@ -121,7 +137,7 @@
       </aside>
     </section>
 
-    <!-- Washing machine bottom-right -->
+    <!-- Washing Machine Illustration -->
     <div class="machine-illustration">
       <div class="machine-door">
         <div class="bubble small"></div>
@@ -131,9 +147,12 @@
     </div>
   </main>
 
+  <!-- Correct PocketBase URL -->
   <script>
-    const pb = new PocketBase("https://YOUR_PB_URL");
+    const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
   </script>
+
+  <!-- App Logic -->
   <script src="/bubbles/js/app.js"></script>
 </body>
 </html>
