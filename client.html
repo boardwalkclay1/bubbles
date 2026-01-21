@@ -4,10 +4,15 @@
   <meta charset="UTF-8">
   <title>Laundry Bubbles · Client</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Manifest + Styles -->
   <link rel="manifest" href="/bubbles/manifest.json">
   <link rel="stylesheet" href="/bubbles/styles.css">
+
+  <!-- PocketBase SDK -->
   <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
 </head>
+
 <body>
   <main class="app-shell">
     <header class="app-header">
@@ -18,12 +23,15 @@
           <div class="brand-text-sub">Client Dashboard</div>
         </div>
       </div>
+
       <button class="secondary-btn" id="logoutBtn">Log out</button>
     </header>
 
     <section class="two-column">
+      <!-- Profile Panel -->
       <div class="panel">
         <h2>Your profile & payment handles</h2>
+
         <form id="clientProfileForm" class="stack-form">
           <label>Name</label>
           <input id="clientName" type="text" required>
@@ -47,8 +55,10 @@
         </form>
       </div>
 
+      <!-- Pickup Request Panel -->
       <div class="panel">
         <h2>Request a pickup</h2>
+
         <form id="orderForm" class="stack-form">
           <label>Pickup address</label>
           <input id="pickupAddress" type="text" required>
@@ -64,15 +74,19 @@
       </div>
     </section>
 
+    <!-- Orders List -->
     <section class="panel" style="margin-top:20px;">
       <h2>Your orders</h2>
       <div id="ordersList" class="list"></div>
     </section>
   </main>
 
+  <!-- Correct PocketBase URL -->
   <script>
-    const pb = new PocketBase("https://YOUR_PB_URL");
+    const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
   </script>
+
+  <!-- Client Logic -->
   <script src="/bubbles/js/client.js"></script>
 </body>
 </html>
