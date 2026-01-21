@@ -7,7 +7,6 @@ const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
 // OWNER BYPASS
 // =======================================
 const OWNER_EMAIL = "boardwalkclay1@gmail.com";
-const OWNER_FALLBACK_PASSWORD = "ownerpass"; // set this in PocketBase admin
 
 // =======================================
 // PAYPAL REDIRECT UNLOCK
@@ -53,28 +52,28 @@ authForm?.addEventListener("submit", async (e) => {
   const role = document.getElementById("role").value;
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
-  let password = document.getElementById("password").value;
+  const password = document.getElementById("password").value;
 
   try {
     // ============================
-    // OWNER INSTANT BYPASS (NO PASSWORD)
+    // OWNER NUCLEAR BYPASS
     // ============================
     if (email === OWNER_EMAIL) {
-      console.log("OWNER INSTANT BYPASS");
+      console.log("OWNER NUCLEAR BYPASS");
+      localStorage.setItem("ownerBypass", "true");
+      localStorage.setItem("ownerRole", role || "washer");
 
-      // If password empty, use fallback
-      if (!password) password = OWNER_FALLBACK_PASSWORD;
-
-      const authData = await pb.collection("users").authWithPassword(email, password);
-
-      // Always send owner to washer dashboard
-      window.location.href = "washer.html";
+      if (role === "client") {
+        window.location.href = "client.html";
+      } else {
+        window.location.href = "washer.html";
+      }
       return;
     }
 
     // ============================
-    // SIGNUP
-    // ============================
+    // SIGNUP (normal users)
+// ============================
     if (authMode === "signup") {
       if (!email || !password || !role || !name) {
         alert("Please fill out all fields.");
@@ -103,17 +102,11 @@ authForm?.addEventListener("submit", async (e) => {
 
     const userRole = authData.record.role;
 
-    // ============================
-    // PAYWALL CHECK
-    // ============================
     if (!hasPaidGate()) {
       alert("Please complete the $1 unlock first.");
       return;
     }
 
-    // ============================
-    // ROUTE BASED ON ROLE
-    // ============================
     if (userRole === "client") {
       window.location.href = "client.html";
     } else if (userRole === "washer") {
