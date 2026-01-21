@@ -4,12 +4,34 @@
 const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
 
 // =======================================
-// OWNER BYPASS (YOU GET IN FREE)
+// OWNER BYPASS
 // =======================================
 const OWNER_EMAIL = "boardwalkclay1@gmail.com";
 
 // =======================================
-// AUTH TAB LOGIC
+// PAYPAL REDIRECT UNLOCK
+// =======================================
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("access") === "granted") {
+  localStorage.setItem("paidGate", "true");
+  console.log("Payment verified via PayPal redirect.");
+}
+
+// =======================================
+// PAYWALL CHECK
+// =======================================
+function hasPaidGate() {
+  return localStorage.getItem("paidGate") === "true";
+}
+
+// Manual unlock (fallback)
+window.unlockAfterPayment = function () {
+  localStorage.setItem("paidGate", "true");
+  alert("Payment received — the app is now unlocked.");
+};
+
+// =======================================
+// AUTH TABS
 // =======================================
 const authTabs = document.querySelectorAll(".auth-tab");
 const authForm = document.getElementById("authForm");
@@ -24,18 +46,6 @@ authTabs.forEach(tab => {
 });
 
 // =======================================
-// PAYPAL GATE CHECK
-// =======================================
-function hasPaidGate() {
-  return localStorage.getItem("paidGate") === "true";
-}
-
-window.unlockAfterPayment = function () {
-  localStorage.setItem("paidGate", "true");
-  alert("Payment received — the app is now unlocked.");
-};
-
-// =======================================
 // AUTH SUBMIT HANDLER
 // =======================================
 authForm?.addEventListener("submit", async (e) => {
@@ -48,7 +58,7 @@ authForm?.addEventListener("submit", async (e) => {
 
   try {
     // ============================
-    // SIGNUP FLOW
+    // SIGNUP
     // ============================
     if (authMode === "signup") {
       if (!email || !password || !role || !name) {
@@ -68,7 +78,7 @@ authForm?.addEventListener("submit", async (e) => {
     }
 
     // ============================
-    // LOGIN FLOW
+    // LOGIN
     // ============================
     const authData = await pb.collection("users").authWithPassword(email, password);
 
@@ -85,9 +95,9 @@ authForm?.addEventListener("submit", async (e) => {
       console.log("Owner bypass activated.");
 
       if (userRole === "client") {
-        window.location.href = "/client.html";
+        window.location.href = "client.html";
       } else {
-        window.location.href = "/washer.html";
+        window.location.href = "washer.html";
       }
       return;
     }
@@ -104,9 +114,9 @@ authForm?.addEventListener("submit", async (e) => {
     // ROUTE BASED ON ROLE
     // ============================
     if (userRole === "client") {
-      window.location.href = "/client.html";
+      window.location.href = "client.html";
     } else if (userRole === "washer") {
-      window.location.href = "/washer.html";
+      window.location.href = "washer.html";
     } else {
       alert("Unknown role on account.");
     }
