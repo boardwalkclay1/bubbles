@@ -1,23 +1,39 @@
-// client.js
+// =======================================
+// PocketBase Initialization
+// =======================================
+const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
 
+// Redirect if not logged in
 if (!pb.authStore.isValid) {
   window.location.href = "/bubbles/index.html";
 }
 
 const user = pb.authStore.model;
+
+// Redirect if not a client
 if (!user || user.role !== "client") {
   window.location.href = "/bubbles/index.html";
 }
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  pb.authStore.clear();
-  window.location.href = "/bubbles/index.html";
-});
-
+// =======================================
+// DOM Elements
+// =======================================
+const logoutBtn = document.getElementById("logoutBtn");
 const profileForm = document.getElementById("clientProfileForm");
 const orderForm = document.getElementById("orderForm");
 const ordersList = document.getElementById("ordersList");
 
+// =======================================
+// Logout
+// =======================================
+logoutBtn?.addEventListener("click", () => {
+  pb.authStore.clear();
+  window.location.href = "/bubbles/index.html";
+});
+
+// =======================================
+// Load Client Profile
+// =======================================
 async function loadClientProfile() {
   document.getElementById("clientName").value = user.name || "";
   document.getElementById("clientPhone").value = user.phone || "";
@@ -27,8 +43,12 @@ async function loadClientProfile() {
   document.getElementById("clientCardNote").value = user.cardNote || "";
 }
 
-profileForm.addEventListener("submit", async (e) => {
+// =======================================
+// Save Profile
+// =======================================
+profileForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   try {
     const updated = await pb.collection("users").update(user.id, {
       name: document.getElementById("clientName").value.trim(),
@@ -38,7 +58,10 @@ profileForm.addEventListener("submit", async (e) => {
       paypalEmail: document.getElementById("clientPaypal").value.trim(),
       cardNote: document.getElementById("clientCardNote").value.trim()
     });
-    pb.authStore.save(pb.authStore.token, updated);
+
+    // Update local auth model
+    pb.authStore.model = updated;
+
     alert("Profile saved.");
   } catch (err) {
     console.error(err);
@@ -46,11 +69,20 @@ profileForm.addEventListener("submit", async (e) => {
   }
 });
 
-orderForm.addEventListener("submit", async (e) => {
+// =======================================
+// Create Order
+// =======================================
+orderForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const pickupAddress = document.getElementById("pickupAddress").value.trim();
   const dropoffAddress = document.getElementById("dropoffAddress").value.trim();
   const notes = document.getElementById("orderNotes").value.trim();
+
+  if (!pickupAddress || !dropoffAddress) {
+    alert("Pickup and dropoff addresses are required.");
+    return;
+  }
 
   try {
     await pb.collection("orders").create({
@@ -60,22 +92,29 @@ orderForm.addEventListener("submit", async (e) => {
       dropoffAddress,
       notes
     });
+
     orderForm.reset();
-    await loadOrders();
+    loadOrders();
+
   } catch (err) {
     console.error(err);
     alert("Could not create order.");
   }
 });
 
+// =======================================
+// Load Orders
+// =======================================
 async function loadOrders() {
   try {
     const result = await pb.collection("orders").getFullList({
-      filter: `client="${user.id}"`,
+      filter: `client = "${user.id}"`,
+      expand: "washer",
       sort: "-created"
     });
 
     ordersList.innerHTML = "";
+
     result.forEach(order => {
       const div = document.createElement("div");
       div.className = "list-item";
@@ -88,11 +127,15 @@ async function loadOrders() {
       `;
       ordersList.appendChild(div);
     });
+
   } catch (err) {
     console.error(err);
     ordersList.innerHTML = "<div class='list-item'>Could not load orders.</div>";
   }
 }
 
+// =======================================
+// Initialize Page
+// =======================================
 loadClientProfile();
 loadOrders();
