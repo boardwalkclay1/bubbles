@@ -85,9 +85,9 @@ authForm?.addEventListener("submit", async (e) => {
       console.log("Owner bypass activated.");
 
       if (userRole === "client") {
-        window.location.href = "/bubbles/client.html";
+        window.location.href = "/client.html";
       } else {
-        window.location.href = "/bubbles/washer.html";
+        window.location.href = "/washer.html";
       }
       return;
     }
@@ -104,9 +104,9 @@ authForm?.addEventListener("submit", async (e) => {
     // ROUTE BASED ON ROLE
     // ============================
     if (userRole === "client") {
-      window.location.href = "/bubbles/client.html";
+      window.location.href = "/client.html";
     } else if (userRole === "washer") {
-      window.location.href = "/bubbles/washer.html";
+      window.location.href = "/washer.html";
     } else {
       alert("Unknown role on account.");
     }
