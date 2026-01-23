@@ -8,9 +8,6 @@
   <!-- Manifest + Styles -->
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
-
-  <!-- PocketBase SDK -->
-  <script src="https://unpkg.com/pocketbase/dist/pocketbase.umd.js"></script>
 </head>
 
 <body>
@@ -79,14 +76,17 @@
       <h2>Your orders</h2>
       <div id="ordersList" class="list"></div>
     </section>
-  </main>
 
-  <!-- Correct PocketBase URL -->
-  <script>
-    const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
-  </script>
+    <!-- Live Map -->
+    <section class="panel" style="margin-top:20px;">
+      <h2>Live Map</h2>
+      <div id="clientMap" class="map-container"></div>
+    </section>
+
+  </main>
 
   <!-- Client Logic -->
   <script src="js/client.js"></script>
+  <script src="js/map.js"></script>
 </body>
 </html>
