@@ -1,9 +1,4 @@
 // =======================================
-// PocketBase Initialization
-// =======================================
-const pb = new PocketBase("https://bubbles-production-7749.up.railway.app");
-
-// =======================================
 // OWNER BYPASS
 // =======================================
 const OWNER_EMAIL = "boardwalkclay1@gmail.com";
@@ -73,43 +68,65 @@ authForm?.addEventListener("submit", async (e) => {
 
     // ============================
     // SIGNUP (normal users)
-// ============================
+    // ============================
     if (authMode === "signup") {
       if (!email || !password || !role || !name) {
         alert("Please fill out all fields.");
         return;
       }
 
-      await pb.collection("users").create({
-        email,
-        password,
-        passwordConfirm: password,
-        role,
-        name
+      const res = await fetch("/api/users-create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, role, name })
       });
 
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Signup failed.");
+        return;
+      }
+
       alert("Account created. Please log in.");
+      return;
     }
 
     // ============================
     // LOGIN (normal users)
     // ============================
-    const authData = await pb.collection("users").authWithPassword(email, password);
+    const res = await fetch("/api/users-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
 
-    if (!authData?.record?.role) {
-      throw new Error("No role set on user.");
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Login failed.");
+      return;
     }
 
-    const userRole = authData.record.role;
+    const user = data.user;
+
+    if (!user?.role) {
+      alert("No role set on user.");
+      return;
+    }
 
     if (!hasPaidGate()) {
       alert("Please complete the $1 unlock first.");
       return;
     }
 
-    if (userRole === "client") {
+    // Save user ID for dashboards
+    localStorage.setItem("userId", user.id);
+    localStorage.setItem("userRole", user.role);
+
+    if (user.role === "client") {
       window.location.href = "client.html";
-    } else if (userRole === "washer") {
+    } else if (user.role === "washer") {
       window.location.href = "washer.html";
     } else {
       alert("Unknown role on account.");
