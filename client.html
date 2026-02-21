@@ -4,16 +4,13 @@
   <meta charset="UTF-8">
   <title>Laundry Bubbles · Client</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Manifest + Styles -->
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
-
-  <!-- Leaflet Map Library -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-
 <body>
   <main class="app-shell">
     <header class="app-header">
@@ -24,73 +21,71 @@
           <div class="brand-text-sub">Client Dashboard</div>
         </div>
       </div>
-
-      <button class="secondary-btn" id="logoutBtn">Log out</button>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="onboarding-client.html" class="secondary-btn" style="text-decoration:none;font-size:0.78rem;padding:6px 12px;">Help</a>
+        <button class="secondary-btn" id="logoutBtn">Log out</button>
+      </div>
     </header>
 
     <section class="two-column">
-      <!-- Profile Panel -->
       <div class="panel">
-        <h2>Your profile & payment handles</h2>
-
+        <h2>Your profile &amp; payment handles</h2>
         <form id="clientProfileForm" class="stack-form">
           <label>Name</label>
-          <input id="clientName" type="text" required>
-
+          <input id="clientName" type="text" required autocomplete="name">
           <label>Phone</label>
-          <input id="clientPhone" type="text">
-
+          <input id="clientPhone" type="text" autocomplete="tel">
           <label>Apple Pay handle (optional)</label>
           <input id="clientApplePay" type="text" placeholder="phone or email">
-
           <label>Cash App $tag (optional)</label>
           <input id="clientCashApp" type="text" placeholder="$yourtag">
-
           <label>PayPal email (optional)</label>
           <input id="clientPaypal" type="email" placeholder="you@paypal.com">
-
           <label>Card note (optional)</label>
-          <input id="clientCardNote" type="text" placeholder="e.g., will pay with Visa ending in 1234">
-
+          <input id="clientCardNote" type="text" placeholder="e.g., Visa ending 1234">
           <button class="primary-btn" type="submit">Save profile</button>
+          <p id="profileMsg" class="tiny-muted" style="text-align:center;min-height:16px;"></p>
         </form>
       </div>
 
-      <!-- Pickup Request Panel -->
       <div class="panel">
         <h2>Request a pickup</h2>
-
         <form id="orderForm" class="stack-form">
           <label>Pickup address</label>
           <input id="pickupAddress" type="text" required>
-
           <label>Dropoff address</label>
-          <input id="dropoffAddress" type="text" required>
-
-          <label>Notes (delicates, stains, sewing, timing)</label>
+          <input id="dropoffAddress" type="text">
+          <label>Service type</label>
+          <select id="serviceType">
+            <option value="standard">Standard wash &amp; fold</option>
+            <option value="delicate">Delicate items</option>
+            <option value="dry_clean">Dry cleaning</option>
+            <option value="express">Express (same day)</option>
+          </select>
+          <label>Notes (delicates, stains, special instructions)</label>
           <textarea id="orderNotes" rows="3"></textarea>
-
+          <label>Budget ($)</label>
+          <input id="orderBudget" type="number" min="0" step="0.01" placeholder="e.g., 25.00">
           <button class="primary-btn" type="submit">Request pickup</button>
+          <p id="orderMsg" class="tiny-muted" style="text-align:center;min-height:16px;"></p>
         </form>
       </div>
     </section>
 
-    <!-- Orders List -->
     <section class="panel" style="margin-top:20px;">
       <h2>Your orders</h2>
-      <div id="ordersList" class="list"></div>
+      <div id="ordersList" class="list">
+        <div class="list-item">Loading orders…</div>
+      </div>
     </section>
 
-    <!-- Live Map -->
     <section class="panel" style="margin-top:20px;">
-      <h2>Live Map</h2>
+      <h2>Live Map — Nearby Washers</h2>
+      <p class="tiny-muted" style="margin-bottom:8px;">Updates every 30 seconds. Blue dots = washers.</p>
       <div id="clientMap" class="map-container"></div>
     </section>
-
   </main>
 
-  <!-- Client Logic -->
-  <script src="js/client.js"></script>
-  <script src="js/map.js"></script>
+  <script type="module" src="js/client-app.js"></script>
 </body>
 </html>

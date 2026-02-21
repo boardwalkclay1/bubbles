@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How to Use Laundry Bubbles · Client Guide</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
+  <style>
+    .onboarding-hero { text-align: center; padding: 24px 0 12px; }
+    .onboarding-hero h1 { font-family: var(--font-70s); color: var(--accent-yellow); font-size: 2rem; margin-bottom: 8px; }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
+    .step-card { background: rgba(5,3,18,0.9); border: 1px solid rgba(247,183,51,0.25); border-radius: 18px; padding: 20px; }
+    .step-number { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #120b24; margin-bottom: 12px; font-size: 1rem; }
+    .step-card h3 { color: var(--text-main); margin-bottom: 8px; font-size: 1rem; }
+    .step-card p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; }
+    .tip-box { background: rgba(63,140,255,0.08); border: 1px solid rgba(63,140,255,0.3); border-radius: 14px; padding: 16px; margin-top: 20px; }
+    .tip-box h3 { color: var(--accent-blue); margin-bottom: 10px; }
+    .tip-list li { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 6px; }
+    .cta-row { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand-lockup">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-text-main">Laundry Bubbles</div>
+          <div class="brand-text-sub">Client Guide</div>
+        </div>
+      </div>
+      <a href="index.html" class="secondary-btn" style="text-decoration:none;">← Back</a>
+    </header>
+
+    <div class="onboarding-hero">
+      <h1>🧺 How to Use Laundry Bubbles</h1>
+      <p class="small-muted">Everything you need to know to get your laundry done hassle-free.</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Create your account</h3>
+        <p>Sign up with your email and select "Client" as your role. It only takes 30 seconds.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>Unlock access for $1.50</h3>
+        <p>Pay a small $1.50 fee via Stripe for 24 hours of full platform access. Cancel anytime — no recurring charges unless you log in again.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>Post a pickup request</h3>
+        <p>Enter your pickup address, describe what you need washed (delicates, regular, dry-clean), and optionally set a budget.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <h3>A washer accepts your job</h3>
+        <p>Local washers in your area will see your request. Once accepted, you'll see the washer's name appear on your order.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">5</div>
+        <h3>Track on the live map</h3>
+        <p>The live map on your dashboard shows nearby washers. Your washer will update their location as they come to pick up.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">6</div>
+        <h3>Pay your washer directly</h3>
+        <p>Agree on payment with your washer via Apple Pay, Cash App, PayPal, or card. The app just connects you — payments are peer-to-peer.</p>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <h3>💡 Tips for a great experience</h3>
+      <ul class="tip-list">
+        <li>Be specific about delicates — mention brand names or fabrics that need special care.</li>
+        <li>Add detailed pickup instructions (gate codes, apartment numbers, best time windows).</li>
+        <li>Set a fair budget — washers can see it and are more likely to accept reasonable offers.</li>
+        <li>Check your order status page to track progress through picked_up → in_progress → delivered.</li>
+        <li>Communicate directly with your washer using the phone number they've shared in their profile.</li>
+      </ul>
+    </div>
+
+    <div class="tip-box" style="margin-top:12px;border-color:rgba(247,183,51,0.3);">
+      <h3 style="color:var(--accent-yellow);">💳 Payment Explained</h3>
+      <p class="small-muted">The $1.50/24hr fee gives you access to the Laundry Bubbles network. This is separate from what you pay your washer. Think of it like a marketplace fee for connecting with local service providers. Your 24-hour window starts when payment is confirmed.</p>
+    </div>
+
+    <div class="tip-box" style="margin-top:12px;border-color:rgba(123,63,228,0.3);">
+      <h3 style="color:var(--accent-purple);">🛡️ Safety Guidelines</h3>
+      <ul class="tip-list">
+        <li>Only share your address and phone number with confirmed washers (ones who have accepted your job).</li>
+        <li>For first-time pickups, consider meeting at a neutral location like your building lobby.</li>
+        <li>Document any special items before handing them over.</li>
+        <li>Rate your washer after delivery to help build community trust.</li>
+      </ul>
+    </div>
+
+    <div class="cta-row">
+      <a href="index.html" class="primary-btn" style="text-decoration:none;">Get started →</a>
+      <a href="onboarding-washer.html" class="secondary-btn" style="text-decoration:none;">Want to earn money? →</a>
+    </div>
+  </main>
+</body>
+</html>
