@@ -6,7 +6,7 @@ async function updateLocation(req, res, next) {
     const { lat, lng } = req.body;
     const user = req.user;
 
-    if (typeof lat !== 'number' || typeof lng !== 'number') {
+    if (isNaN(lat) || isNaN(lng)) {
       return res.status(400).json({ error: 'lat and lng must be numbers' });
     }
 

@@ -5,7 +5,7 @@ const rateLimit = require('express-rate-limit');
 
 const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 20,
   message: { error: 'Too many payment requests, please try again later' },
 });
 

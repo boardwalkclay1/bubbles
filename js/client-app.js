@@ -124,7 +124,7 @@ async function createOrder(e) {
 async function setupMap() {
   try {
     const loc = await getMyLocation();
-    const map = initMap("clientMap", loc.lat, loc.lng);
+    initMap("clientMap", loc.lat, loc.lng);
     setUserMarker(loc.lat, loc.lng, "You");
 
     startLocationTracking(token, 30000);
