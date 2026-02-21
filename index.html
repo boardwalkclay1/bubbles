@@ -1,13 +1,160 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Bubbles Subscription</title>
+  <meta charset="UTF-8">
+  <title>Laundry Bubbles — Get Started</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Welcome to Bubbles!</h1>
-    <p>Subscribe now for just $2 per day!</p>
-    <footer>
-        <p>&copy; 2026 Bubbles Inc.</p>
-    </footer>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand-lockup">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-text-main">Laundry Bubbles</div>
+          <div class="brand-text-sub">On-demand laundry service</div>
+        </div>
+      </div>
+      <span class="hero-pill">Beta &middot; 2026</span>
+    </header>
+
+    <!-- ===== PAYMENT GATE ===== -->
+    <div id="payGate">
+      <div class="hero-layout">
+        <div class="hero-copy">
+          <h1>Fresh <span>Laundry</span><br>Delivered.</h1>
+          <p>Laundry Bubbles connects you with local washers who pick up, wash, fold, and return your clothes &mdash; all from your phone.</p>
+          <p class="small-muted">Unlock the full app with a one-time $1 access fee.</p>
+
+          <div class="how-it-works" style="margin-top:20px;">
+            <div class="disclaimer-title">How it works</div>
+            <div class="step-list">
+              <div class="step-item">
+                <span class="step-num">1</span>
+                Pay the one-time $1 access fee via PayPal
+              </div>
+              <div class="step-item">
+                <span class="step-num">2</span>
+                Create your account as a Client or a Washer
+              </div>
+              <div class="step-item">
+                <span class="step-num">3</span>
+                Clients post laundry requests; Washers accept &amp; earn
+              </div>
+              <div class="step-item">
+                <span class="step-num">4</span>
+                Track jobs and arrange payments directly in-app
+              </div>
+            </div>
+          </div>
+
+          <div class="disclaimer-box" style="margin-top:16px;">
+            <div class="disclaimer-title">⚠ Disclaimer</div>
+            Laundry Bubbles is a peer-to-peer marketplace. We do not employ washers or guarantee service quality. Payments between clients and washers are arranged directly. The $1 fee covers platform access only and is non-refundable. By proceeding you agree to use the service at your own risk.
+          </div>
+        </div>
+
+        <div class="auth-panel">
+          <div class="disclaimer-title" style="margin-bottom:14px;text-align:center;font-size:0.85rem;">
+            Unlock the App — $1 One-Time Fee
+          </div>
+          <p class="small-muted" style="margin-bottom:14px;font-size:0.8rem;text-align:center;">
+            Pay $1 via PayPal, then click the button below to unlock.
+          </p>
+          <a class="primary-btn"
+             style="display:block;text-align:center;text-decoration:none;margin-bottom:10px;"
+             href="https://www.paypal.com/paypalme/boardwalkclay1/1"
+             target="_blank" rel="noopener noreferrer">
+            Pay $1 on PayPal &rarr;
+          </a>
+          <button class="secondary-btn" style="width:100%;" onclick="unlockAfterPayment()">
+            ✓ I&rsquo;ve paid &mdash; Unlock App
+          </button>
+          <p class="tiny-muted" style="margin-top:12px;text-align:center;">
+            Issues? Email boardwalkclay1@gmail.com
+          </p>
+        </div>
+      </div>
+    </div><!-- /#payGate -->
+
+    <!-- ===== AUTH SECTION ===== -->
+    <div id="authSection" style="display:none;">
+      <div class="hero-layout">
+        <div class="hero-copy">
+          <h1>Welcome <span>Back.</span></h1>
+          <p>Sign in or create your Laundry Bubbles account to continue.</p>
+
+          <div class="how-it-works" style="margin-top:20px;">
+            <div class="disclaimer-title">How it works</div>
+            <div class="step-list">
+              <div class="step-item">
+                <span class="step-num">1</span>
+                <strong>Clients</strong> post laundry requests with pickup address &amp; budget
+              </div>
+              <div class="step-item">
+                <span class="step-num">2</span>
+                <strong>Washers</strong> browse open jobs, accept them, and mark complete
+              </div>
+              <div class="step-item">
+                <span class="step-num">3</span>
+                Track status in real-time on your personal dashboard
+              </div>
+              <div class="step-item">
+                <span class="step-num">4</span>
+                Pay washers directly via Apple Pay, Cash App, PayPal, or card
+              </div>
+            </div>
+          </div>
+
+          <div class="disclaimer-box" style="margin-top:16px;">
+            <div class="disclaimer-title">⚠ Disclaimer</div>
+            Laundry Bubbles is a peer-to-peer marketplace. We do not employ washers or guarantee service quality. All payments are arranged directly between clients and washers. Use at your own risk.
+          </div>
+        </div>
+
+        <div class="auth-panel">
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-mode="login">Log In</button>
+            <button class="auth-tab" data-mode="signup">Sign Up</button>
+          </div>
+          <form id="authForm" class="auth-form">
+            <div id="nameGroup" style="display:none;">
+              <label>Full Name</label>
+              <input id="name" type="text" placeholder="Your full name">
+            </div>
+
+            <label>Email</label>
+            <input id="email" type="email" placeholder="you@email.com" required>
+
+            <label>Password</label>
+            <input id="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+
+            <label>I am a&hellip;</label>
+            <select id="role">
+              <option value="client">Client (I need laundry done)</option>
+              <option value="washer">Washer (I do laundry for others)</option>
+            </select>
+
+            <button class="primary-btn" type="submit" style="margin-top:6px;">Continue &rarr;</button>
+          </form>
+        </div>
+      </div>
+    </div><!-- /#authSection -->
+
+    <!-- Decorative washing machine illustration -->
+    <div class="machine-illustration">
+      <div class="machine-door">
+        <div class="bubble small"></div>
+        <div class="bubble medium"></div>
+        <div class="bubble large"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
 </body>
 </html>
