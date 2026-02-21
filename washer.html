@@ -4,16 +4,13 @@
   <meta charset="UTF-8">
   <title>Laundry Bubbles · Washer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Manifest + Styles -->
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
-
-  <!-- Leaflet Map Library -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-
 <body>
   <main class="app-shell">
     <header class="app-header">
@@ -24,61 +21,64 @@
           <div class="brand-text-sub">Washer Dashboard</div>
         </div>
       </div>
-
-      <button class="secondary-btn" id="logoutBtn">Log out</button>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="onboarding-washer.html" class="secondary-btn" style="text-decoration:none;font-size:0.78rem;padding:6px 12px;">Earn tips</a>
+        <button class="secondary-btn" id="logoutBtn">Log out</button>
+      </div>
     </header>
 
     <section class="two-column">
-      <!-- Washer Profile Panel -->
       <div class="panel">
-        <h2>Your washer profile & payment handles</h2>
-
+        <h2>Your washer profile</h2>
         <form id="washerProfileForm" class="stack-form">
           <label>Name</label>
           <input id="washerName" type="text" required>
-
           <label>Phone</label>
           <input id="washerPhone" type="text">
-
-          <label>Apple Pay handle (optional)</label>
+          <label>Apple Pay handle</label>
           <input id="washerApplePay" type="text">
-
-          <label>Cash App $tag (optional)</label>
+          <label>Cash App $tag</label>
           <input id="washerCashApp" type="text">
-
-          <label>PayPal email (optional)</label>
+          <label>PayPal email</label>
           <input id="washerPaypal" type="email">
-
-          <label>Card note (optional)</label>
-          <input id="washerCardNote" type="text">
-
+          <label>Service area (e.g., "Atlanta, GA 5-mile radius")</label>
+          <input id="washerServiceArea" type="text">
+          <label>Skills (e.g., "Delicates, dry clean, same-day")</label>
+          <input id="washerSkills" type="text">
+          <label>Availability (e.g., "Mon-Fri 9am-5pm")</label>
+          <input id="washerAvailability" type="text">
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+            <input id="washerAvailable" type="checkbox" style="width:auto;border-radius:4px;">
+            <label style="margin-bottom:0;text-transform:none;letter-spacing:0;">Available for jobs now</label>
+          </div>
           <button class="primary-btn" type="submit">Save profile</button>
+          <p id="profileMsg" class="tiny-muted" style="text-align:center;min-height:16px;"></p>
         </form>
       </div>
 
-      <!-- Incoming Orders Panel -->
       <div class="panel">
-        <h2>Incoming requests</h2>
-        <div id="incomingOrders" class="list"></div>
+        <h2>Available requests near you</h2>
+        <button class="secondary-btn" id="refreshRequestsBtn" style="margin-bottom:10px;width:100%;">Refresh requests</button>
+        <div id="incomingOrders" class="list">
+          <div class="list-item">Loading requests…</div>
+        </div>
       </div>
     </section>
 
-    <!-- Active Orders -->
     <section class="panel" style="margin-top:20px;">
-      <h2>Active orders</h2>
-      <div id="activeOrders" class="list"></div>
+      <h2>Your active orders</h2>
+      <div id="activeOrders" class="list">
+        <div class="list-item">Loading active orders…</div>
+      </div>
     </section>
 
-    <!-- Live Map -->
     <section class="panel" style="margin-top:20px;">
-      <h2>Live Map</h2>
+      <h2>Live Map — Nearby Requests</h2>
+      <p class="tiny-muted" style="margin-bottom:8px;">Updates every 30 seconds. Orange dots = client requests.</p>
       <div id="washerMap" class="map-container"></div>
     </section>
-
   </main>
 
-  <!-- Washer Logic -->
-  <script src="js/washer.js"></script>
-  <script src="js/map.js"></script>
+  <script type="module" src="js/washer-app.js"></script>
 </body>
 </html>
