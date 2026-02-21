@@ -27,8 +27,10 @@ class User {
   }
 
   static async update(id, fields) {
-    const keys = Object.keys(fields);
-    const values = Object.values(fields);
+    const ALLOWED_FIELDS = ['name', 'phone', 'apple_pay_handle', 'cash_app_handle', 'paypal_email', 'card_note'];
+    const keys = Object.keys(fields).filter(k => ALLOWED_FIELDS.includes(k));
+    if (keys.length === 0) return null;
+    const values = keys.map(k => fields[k]);
     const setClause = keys.map((k, i) => `${k} = $${i + 2}`).join(', ');
     const result = await pool.query(
       `UPDATE users SET ${setClause} WHERE id = $1 RETURNING id, email, name, role, phone, apple_pay_handle, cash_app_handle, paypal_email, card_note`,

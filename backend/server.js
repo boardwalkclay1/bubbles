@@ -58,15 +58,16 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/profile', profileRoutes);
+// /api/washers provides washer-specific profile lookups as an alias
 app.use('/api/washers', require('./routes/profiles'));
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
-// Serve static frontend
+// Serve static frontend for non-API routes only
 const frontendPath = path.join(__dirname, '..');
 app.use(express.static(frontendPath, { index: false }));
-app.get('*', (req, res) => {
+app.get(/^(?!\/api).*$/, (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
