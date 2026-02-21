@@ -2,95 +2,151 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Laundry Bubbles · Client</title>
+  <title>Laundry Bubbles &middot; Client</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Manifest + Styles -->
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
-
-  <!-- Leaflet Map Library -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 </head>
-
 <body>
-  <main class="app-shell">
-    <header class="app-header">
-      <div class="brand-lockup">
+  <div class="dashboard-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand-lockup" style="padding:20px 16px 10px;">
         <div class="brand-mark"></div>
         <div>
-          <div class="brand-text-main">Laundry Bubbles</div>
-          <div class="brand-text-sub">Client Dashboard</div>
+          <div class="brand-text-main" style="font-size:1.1rem;">Laundry Bubbles</div>
+          <div class="brand-text-sub">Client</div>
         </div>
       </div>
 
-      <button class="secondary-btn" id="logoutBtn">Log out</button>
-    </header>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="dashboard">&#128202; Dashboard</button>
+        <button class="nav-item" data-tab="new-request">&#10133; New Request</button>
+        <button class="nav-item" data-tab="my-requests">&#128203; My Requests</button>
+        <button class="nav-item" data-tab="profile">&#128100; Profile</button>
+      </nav>
 
-    <section class="two-column">
-      <!-- Profile Panel -->
-      <div class="panel">
-        <h2>Your profile & payment handles</h2>
-
-        <form id="clientProfileForm" class="stack-form">
-          <label>Name</label>
-          <input id="clientName" type="text" required>
-
-          <label>Phone</label>
-          <input id="clientPhone" type="text">
-
-          <label>Apple Pay handle (optional)</label>
-          <input id="clientApplePay" type="text" placeholder="phone or email">
-
-          <label>Cash App $tag (optional)</label>
-          <input id="clientCashApp" type="text" placeholder="$yourtag">
-
-          <label>PayPal email (optional)</label>
-          <input id="clientPaypal" type="email" placeholder="you@paypal.com">
-
-          <label>Card note (optional)</label>
-          <input id="clientCardNote" type="text" placeholder="e.g., will pay with Visa ending in 1234">
-
-          <button class="primary-btn" type="submit">Save profile</button>
-        </form>
+      <div style="margin-top:auto;padding:16px;">
+        <button class="secondary-btn" id="logoutBtn" style="width:100%;">Log out</button>
       </div>
+    </aside>
 
-      <!-- Pickup Request Panel -->
-      <div class="panel">
-        <h2>Request a pickup</h2>
+    <!-- Main content -->
+    <main class="dashboard-main">
 
-        <form id="orderForm" class="stack-form">
-          <label>Pickup address</label>
-          <input id="pickupAddress" type="text" required>
+      <!-- Dashboard Tab -->
+      <section class="tab-content active" id="tab-dashboard">
+        <h2 class="tab-title">Dashboard</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num" id="statTotal">0</div>
+            <div class="stat-label">Total Requests</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statCompleted">0</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statPending">0</div>
+            <div class="stat-label">Pending / Active</div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:4px;">
+          <h3 style="margin-bottom:12px;font-size:0.95rem;">Recent Activity</h3>
+          <div id="recentActivity" class="list"></div>
+        </div>
+      </section>
 
-          <label>Dropoff address</label>
-          <input id="dropoffAddress" type="text" required>
+      <!-- New Request Tab -->
+      <section class="tab-content" id="tab-new-request">
+        <h2 class="tab-title">New Laundry Request</h2>
+        <div class="panel">
+          <form id="requestForm" class="stack-form">
+            <label>Service Type</label>
+            <select id="serviceType">
+              <option value="wash-fold">Wash &amp; Fold</option>
+              <option value="wash-iron">Wash, Dry &amp; Iron</option>
+              <option value="dry-clean">Dry Clean</option>
+              <option value="delicates">Delicates / Hand Wash</option>
+              <option value="pickup-dropoff">Pickup &amp; Drop-off Only</option>
+            </select>
 
-          <label>Notes (delicates, stains, sewing, timing)</label>
-          <textarea id="orderNotes" rows="3"></textarea>
+            <label>Items to Wash</label>
+            <textarea id="itemsList" rows="3"
+              placeholder="e.g., 2 shirts, 3 pants, 1 comforter..."></textarea>
 
-          <button class="primary-btn" type="submit">Request pickup</button>
-        </form>
-      </div>
-    </section>
+            <label>Special Instructions</label>
+            <textarea id="instructions" rows="3"
+              placeholder="e.g., no bleach, hang dry shirts, cold water only..."></textarea>
 
-    <!-- Orders List -->
-    <section class="panel" style="margin-top:20px;">
-      <h2>Your orders</h2>
-      <div id="ordersList" class="list"></div>
-    </section>
+            <label>Pickup Address <span style="color:var(--accent-orange);">*</span></label>
+            <input id="pickupAddress" type="text" placeholder="123 Main St, City, State" required>
 
-    <!-- Live Map -->
-    <section class="panel" style="margin-top:20px;">
-      <h2>Live Map</h2>
-      <div id="clientMap" class="map-container"></div>
-    </section>
+            <label>Budget (optional, $)</label>
+            <input id="budget" type="number" min="0" step="0.01" placeholder="e.g., 25.00">
 
-  </main>
+            <button class="primary-btn" type="submit">Post Request &rarr;</button>
+          </form>
+        </div>
+      </section>
 
-  <!-- Client Logic -->
+      <!-- My Requests Tab -->
+      <section class="tab-content" id="tab-my-requests">
+        <h2 class="tab-title">My Requests</h2>
+        <div id="myRequestsList" class="list"></div>
+      </section>
+
+      <!-- Profile Tab -->
+      <section class="tab-content" id="tab-profile">
+        <h2 class="tab-title">My Profile</h2>
+        <div class="two-column">
+          <div class="panel">
+            <h3 style="margin-bottom:14px;font-size:0.95rem;">Personal Info</h3>
+            <form id="clientProfileForm" class="stack-form">
+              <label>Name</label>
+              <input id="clientName" type="text" required>
+
+              <label>Phone</label>
+              <input id="clientPhone" type="tel" placeholder="(555) 000-0000">
+
+              <label>Default Pickup Address</label>
+              <input id="clientAddress" type="text" placeholder="123 Main St">
+
+              <button class="primary-btn" type="submit">Save Profile</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <h3 style="margin-bottom:14px;font-size:0.95rem;">Payment Methods</h3>
+            <p class="tiny-muted" style="margin-bottom:12px;">
+              Washers will see these details on accepted jobs so you can pay them directly.
+            </p>
+            <form id="clientPaymentForm" class="stack-form">
+              <label>Apple Pay (phone or email)</label>
+              <input id="clientApplePay" type="text" placeholder="phone or email">
+
+              <label>Cash App $tag</label>
+              <input id="clientCashApp" type="text" placeholder="$yourtag">
+
+              <label>PayPal email</label>
+              <input id="clientPaypal" type="email" placeholder="you@paypal.com">
+
+              <label>Card / other note</label>
+              <input id="clientCardNote" type="text" placeholder="e.g., Visa ending in 1234">
+
+              <button class="primary-btn" type="submit">Save Payment Info</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
   <script src="js/client.js"></script>
-  <script src="js/map.js"></script>
 </body>
 </html>
+

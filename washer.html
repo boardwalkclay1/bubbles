@@ -2,83 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Laundry Bubbles · Washer</title>
+  <title>Laundry Bubbles &middot; Washer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Manifest + Styles -->
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
-
-  <!-- Leaflet Map Library -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 </head>
-
 <body>
-  <main class="app-shell">
-    <header class="app-header">
-      <div class="brand-lockup">
+  <div class="dashboard-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand-lockup" style="padding:20px 16px 10px;">
         <div class="brand-mark"></div>
         <div>
-          <div class="brand-text-main">Laundry Bubbles</div>
-          <div class="brand-text-sub">Washer Dashboard</div>
+          <div class="brand-text-main" style="font-size:1.1rem;">Laundry Bubbles</div>
+          <div class="brand-text-sub">Washer</div>
         </div>
       </div>
 
-      <button class="secondary-btn" id="logoutBtn">Log out</button>
-    </header>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="dashboard">&#128202; Dashboard</button>
+        <button class="nav-item" data-tab="find-jobs">&#128269; Find Jobs</button>
+        <button class="nav-item" data-tab="active-jobs">&#9889; Active Jobs</button>
+        <button class="nav-item" data-tab="completed-jobs">&#9989; Completed Jobs</button>
+        <button class="nav-item" data-tab="profile">&#128100; Profile</button>
+      </nav>
 
-    <section class="two-column">
-      <!-- Washer Profile Panel -->
-      <div class="panel">
-        <h2>Your washer profile & payment handles</h2>
-
-        <form id="washerProfileForm" class="stack-form">
-          <label>Name</label>
-          <input id="washerName" type="text" required>
-
-          <label>Phone</label>
-          <input id="washerPhone" type="text">
-
-          <label>Apple Pay handle (optional)</label>
-          <input id="washerApplePay" type="text">
-
-          <label>Cash App $tag (optional)</label>
-          <input id="washerCashApp" type="text">
-
-          <label>PayPal email (optional)</label>
-          <input id="washerPaypal" type="email">
-
-          <label>Card note (optional)</label>
-          <input id="washerCardNote" type="text">
-
-          <button class="primary-btn" type="submit">Save profile</button>
-        </form>
+      <div style="margin-top:auto;padding:16px;">
+        <button class="secondary-btn" id="logoutBtn" style="width:100%;">Log out</button>
       </div>
+    </aside>
 
-      <!-- Incoming Orders Panel -->
-      <div class="panel">
-        <h2>Incoming requests</h2>
-        <div id="incomingOrders" class="list"></div>
-      </div>
-    </section>
+    <!-- Main content -->
+    <main class="dashboard-main">
 
-    <!-- Active Orders -->
-    <section class="panel" style="margin-top:20px;">
-      <h2>Active orders</h2>
-      <div id="activeOrders" class="list"></div>
-    </section>
+      <!-- Dashboard Tab -->
+      <section class="tab-content active" id="tab-dashboard">
+        <h2 class="tab-title">Washer Dashboard</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num" id="statTotal">0</div>
+            <div class="stat-label">Total Jobs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statCompleted">0</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statActive">0</div>
+            <div class="stat-label">In Progress</div>
+          </div>
+          <div class="stat-card accent">
+            <div class="stat-num" id="statEarnings">$0.00</div>
+            <div class="stat-label">Total Earnings</div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:4px;">
+          <h3 style="margin-bottom:12px;font-size:0.95rem;">Recent Activity</h3>
+          <div id="recentActivity" class="list"></div>
+        </div>
+      </section>
 
-    <!-- Live Map -->
-    <section class="panel" style="margin-top:20px;">
-      <h2>Live Map</h2>
-      <div id="washerMap" class="map-container"></div>
-    </section>
+      <!-- Find Jobs Tab -->
+      <section class="tab-content" id="tab-find-jobs">
+        <h2 class="tab-title">Find Jobs</h2>
+        <div id="availableJobsList" class="list"></div>
+      </section>
 
-  </main>
+      <!-- Active Jobs Tab -->
+      <section class="tab-content" id="tab-active-jobs">
+        <h2 class="tab-title">Active Jobs</h2>
+        <div id="activeJobsList" class="list"></div>
+      </section>
 
-  <!-- Washer Logic -->
+      <!-- Completed Jobs Tab -->
+      <section class="tab-content" id="tab-completed-jobs">
+        <h2 class="tab-title">Completed Jobs</h2>
+        <div id="completedJobsList" class="list"></div>
+      </section>
+
+      <!-- Profile Tab -->
+      <section class="tab-content" id="tab-profile">
+        <h2 class="tab-title">My Profile</h2>
+        <div class="two-column">
+          <div class="panel">
+            <h3 style="margin-bottom:14px;font-size:0.95rem;">Personal Info &amp; Skills</h3>
+            <form id="washerProfileForm" class="stack-form">
+              <label>Name</label>
+              <input id="washerName" type="text" required>
+
+              <label>Phone</label>
+              <input id="washerPhone" type="tel" placeholder="(555) 000-0000">
+
+              <label>Service Area</label>
+              <input id="washerArea" type="text" placeholder="e.g., Downtown Seattle">
+
+              <label>Skills / Services Offered</label>
+              <textarea id="washerSkills" rows="3"
+                placeholder="e.g., wash &amp; fold, ironing, delicates, comforters..."></textarea>
+
+              <label>Availability</label>
+              <input id="washerAvailability" type="text" placeholder="e.g., Weekdays 9am&ndash;5pm">
+
+              <button class="primary-btn" type="submit">Save Profile</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <h3 style="margin-bottom:14px;font-size:0.95rem;">Payment Setup</h3>
+            <p class="tiny-muted" style="margin-bottom:12px;">
+              Clients will see these details so they can pay you directly after job completion.
+            </p>
+            <form id="washerPaymentForm" class="stack-form">
+              <label>Apple Pay handle</label>
+              <input id="washerApplePay" type="text" placeholder="phone or email">
+
+              <label>Cash App $tag</label>
+              <input id="washerCashApp" type="text" placeholder="$yourtag">
+
+              <label>PayPal email</label>
+              <input id="washerPaypal" type="email" placeholder="you@paypal.com">
+
+              <label>Card / other payment note</label>
+              <input id="washerCardNote" type="text" placeholder="e.g., Venmo @username">
+
+              <button class="primary-btn" type="submit">Save Payment Info</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
   <script src="js/washer.js"></script>
-  <script src="js/map.js"></script>
 </body>
 </html>
+
